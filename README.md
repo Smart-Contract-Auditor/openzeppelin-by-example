@@ -1,13 +1,25 @@
-# Sample Hardhat Project
+# OpenZeppelin by Example
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project provides sample implementations for some of the most commonly used OpenZeppelin utilities and contracts. This project is not affiliated with OpenZeppelin and is intended for educational purposes only. 
 
-Try running some of the following tasks:
+Visit the OpenZeppelin website at:
+www.openzeppelin.com
+
+OpenZeppelin's contract GitHub repo:
+https://github.com/OpenZeppelin/openzeppelin-contracts
+
+# Getting Started
+
+This project requires Node 18 or higher. To get started, clone the repository and run the following command:
 
 ```shell
-npx hardhat help
+npm install
+```
+
+# Testing
+
+You can run a specific HardHat test using the correpsonding command from the `package.json` file, e.g. `npm run test-ownable` or `npx hardhat test {fileName}`. You can also perform all of the tests by running:
+
+```shell
 npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
 ```

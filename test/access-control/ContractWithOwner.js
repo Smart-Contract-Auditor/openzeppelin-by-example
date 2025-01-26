@@ -29,7 +29,6 @@ describe("ContractWithOwner", () => {
         await expect(contractWithOwner.connect(nonOwner).protectedFunction(20))
             .to.be.revertedWithCustomError(contractWithOwner, "OwnableUnauthorizedAccount")
             .withArgs(nonOwner.address);
-        console.log("Transaction reverted as expected.");
     });
 
     it("Should allow anyone to call the unprotected function", async () => {
@@ -46,7 +45,6 @@ describe("ContractWithOwner", () => {
         await expect(contractWithOwner.transferOwnership(hre.ethers.ZeroAddress))
             .to.be.revertedWithCustomError(contractWithOwner, "OwnableInvalidOwner")
             .withArgs(hre.ethers.ZeroAddress);
-        console.log("Transaction reverted as expected.");
     });
 
     it("Should transfer ownership to a new owner", async () => {
@@ -76,7 +74,6 @@ describe("ContractWithOwner", () => {
         await expect(contractWithOwner.connect(nonOwner).renounceOwnership())
             .to.be.revertedWithCustomError(contractWithOwner, "OwnableUnauthorizedAccount")
             .withArgs(nonOwner.address);
-        console.log("Transaction reverted as expected.");
     });
 
     it("Should renounce ownership and leave the contract without an owner", async () => {
