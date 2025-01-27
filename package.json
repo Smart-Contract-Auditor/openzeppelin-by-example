@@ -6,7 +6,7 @@
   "scripts": {
     "test-ownable": "npx hardhat test ./test/access/ContractWithOwner.t.js",
     "test-ownable2step": "npx hardhat test ./test/access/ContractWithOwner2Step.t.js",
-    "test-pauseable": "npx hardhat test ./test/utils/PauseableContract.t.js"
+    "test-pausable": "npx hardhat test ./test/utils/PausableContract.t.js"
   },
   "author": "TheSmartContractAuditor",
   "license": "ISC",
