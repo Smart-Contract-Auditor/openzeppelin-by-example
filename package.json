@@ -4,8 +4,9 @@
   "description": "A series of examples contracts that leverage OpenZeppelin's contract library. ",
   "main": "index.js",
   "scripts": {
-    "test-ownable": "npx hardhat test ./test/access-control/ContractWithOwner.js",
-    "test-ownable2step": "npx hardhat test ./test/access-control/ContractWithOwner2Step.js"
+    "test-ownable": "npx hardhat test ./test/access/ContractWithOwner.t.js",
+    "test-ownable2step": "npx hardhat test ./test/access/ContractWithOwner2Step.t.js",
+    "test-pauseable": "npx hardhat test ./test/utils/PauseableContract.t.js"
   },
   "author": "TheSmartContractAuditor",
   "license": "ISC",

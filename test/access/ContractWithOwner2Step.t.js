@@ -3,22 +3,29 @@ const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helper
 const { expect } = require("chai");
 
 describe("contractWithOwner2Step", () => {
+    let deployer;
+    let newOwner;
+    let nonOwner;
+    let contractWithOwner2Step;
+
     async function deployFixture() {
         const [deployer, newOwner, nonOwner] = await hre.ethers.getSigners();
         const contractWithOwner2Step = await hre.ethers.deployContract("ContractWithOwner2Step");
         return { deployer, newOwner, nonOwner, contractWithOwner2Step };
     }
 
+    beforeEach(async () => {
+        ({deployer, newOwner, nonOwner, contractWithOwner2Step} = await loadFixture(deployFixture));
+    })
+
     /*** Ownable ***/
 
     it("Verify the owner is the contract deployer", async () => {
-        const { deployer, contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log(`Deployer: ${deployer.address} Owner: ${await contractWithOwner2Step.owner()}`);
         expect(await contractWithOwner2Step.owner()).to.equal(deployer.address);
     });
 
     it("Should allow the owner to call the protected function", async () => {
-        const { contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log("Current protectedCount value: ", await contractWithOwner2Step.protectedCount());
         await contractWithOwner2Step.protectedFunction(10);
         console.log("New protectedCount value: ", await contractWithOwner2Step.protectedCount());
@@ -26,7 +33,6 @@ describe("contractWithOwner2Step", () => {
     });
 
     it("Should revert when a non-owner calls the protected function", async () => {
-        const { nonOwner, contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log("Attempting to call protectedFunction as non-owner...");
         await expect(contractWithOwner2Step.connect(nonOwner).protectedFunction(20))
             .to.be.revertedWithCustomError(contractWithOwner2Step, "OwnableUnauthorizedAccount")
@@ -35,7 +41,6 @@ describe("contractWithOwner2Step", () => {
     });
 
     it("Should allow anyone to call the unprotected function", async () => {
-        const { nonOwner, contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log("Current unprotectedCount value: ", await contractWithOwner2Step.unprotectedCount());
         await contractWithOwner2Step.connect(nonOwner).unprotectedFunction(30);
         console.log("New unprotectedCount value: ", await contractWithOwner2Step.unprotectedCount());
@@ -45,7 +50,6 @@ describe("contractWithOwner2Step", () => {
     /*** Ownable2Step ***/
 
     it("Should set a new pending owner", async () => {
-        const { newOwner, contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner2Step.owner()}`);
         console.log(`Transferring ownership to new owner: ${newOwner.address}`);
         await contractWithOwner2Step.transferOwnership(newOwner.address);
@@ -54,7 +58,6 @@ describe("contractWithOwner2Step", () => {
     });
 
     it("Should allow setting the pending owner to the zero adddress", async () => {
-        const { newOwner, contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner2Step.owner()}`);
         console.log(`Transferring ownership to new owner: ${hre.ethers.ZeroAddress}`);
         await contractWithOwner2Step.transferOwnership(hre.ethers.ZeroAddress);
@@ -63,7 +66,6 @@ describe("contractWithOwner2Step", () => {
     });
 
     it("Should allow the pending owner to accept ownership", async () => {
-        const { newOwner, contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner2Step.owner()}`);
         await contractWithOwner2Step.transferOwnership(newOwner.address);
         console.log(`Pending owner is: ${await contractWithOwner2Step.pendingOwner()}`);
@@ -73,16 +75,14 @@ describe("contractWithOwner2Step", () => {
     });
 
     it("Should not allow an address other than the pending owner to accept ownership", async () => {
-        const { newOwner, nonOwner, contractWithOwner2Step } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner2Step.owner()}`);
         await contractWithOwner2Step.transferOwnership(newOwner.address);
         console.log(`Pending owner is: ${await contractWithOwner2Step.pendingOwner()}`);
         await expect(contractWithOwner2Step.connect(nonOwner).acceptOwnership())
-        .to.be.revertedWithCustomError(contractWithOwner2Step, "OwnableUnauthorizedAccount");
+            .to.be.revertedWithCustomError(contractWithOwner2Step, "OwnableUnauthorizedAccount");
     });
 
     it("Should allow the new owner to call the protected function", async () => {
-        const { newOwner, contractWithOwner2Step } = await loadFixture(deployFixture);
         await contractWithOwner2Step.transferOwnership(newOwner.address);
         await contractWithOwner2Step.connect(newOwner).acceptOwnership()
         console.log("Current protectedCount value: ", await contractWithOwner2Step.protectedCount());

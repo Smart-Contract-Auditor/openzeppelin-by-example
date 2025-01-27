@@ -3,20 +3,27 @@ const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helper
 const { expect } = require("chai");
 
 describe("ContractWithOwner", () => {
+    let deployer;
+    let newOwner;
+    let nonOwner;
+    let contractWithOwner;
+
     async function deployFixture() {
-        const [deployer, newOwner, nonOwner] = await hre.ethers.getSigners();
-        const contractWithOwner = await hre.ethers.deployContract("ContractWithOwner");
+        [deployer, newOwner, nonOwner] = await hre.ethers.getSigners();
+        contractWithOwner = await hre.ethers.deployContract("ContractWithOwner");
         return { deployer, newOwner, nonOwner, contractWithOwner };
     }
 
+    beforeEach(async () => {
+        ({ deployer, newOwner, nonOwner, contractWithOwner } = await loadFixture(deployFixture));
+    })
+
     it("Verify the owner is the contract deployer", async () => {
-        const { deployer, contractWithOwner } = await loadFixture(deployFixture);
         console.log(`Deployer: ${deployer.address} Owner: ${await contractWithOwner.owner()}`);
         expect(await contractWithOwner.owner()).to.equal(deployer.address);
     });
 
     it("Should allow the owner to call the protected function", async () => {
-        const { contractWithOwner } = await loadFixture(deployFixture);
         console.log("Current protectedCount value: ", await contractWithOwner.protectedCount());
         await contractWithOwner.protectedFunction(10);
         console.log("New protectedCount value: ", await contractWithOwner.protectedCount());
@@ -24,7 +31,6 @@ describe("ContractWithOwner", () => {
     });
 
     it("Should revert when a non-owner calls the protected function", async () => {
-        const { nonOwner, contractWithOwner } = await loadFixture(deployFixture);
         console.log("Attempting to call protectedFunction as non-owner...");
         await expect(contractWithOwner.connect(nonOwner).protectedFunction(20))
             .to.be.revertedWithCustomError(contractWithOwner, "OwnableUnauthorizedAccount")
@@ -32,7 +38,6 @@ describe("ContractWithOwner", () => {
     });
 
     it("Should allow anyone to call the unprotected function", async () => {
-        const { nonOwner, contractWithOwner } = await loadFixture(deployFixture);
         console.log("Current unprotectedCount value: ", await contractWithOwner.unprotectedCount());
         await contractWithOwner.connect(nonOwner).unprotectedFunction(30);
         console.log("New unprotectedCount value: ", await contractWithOwner.unprotectedCount());
@@ -40,7 +45,6 @@ describe("ContractWithOwner", () => {
     });
 
     it("Should revert when transferring ownership to the zero address", async () => {
-        const { contractWithOwner } = await loadFixture(deployFixture);
         console.log("Attempting to transfer ownership to the zero address...");
         await expect(contractWithOwner.transferOwnership(hre.ethers.ZeroAddress))
             .to.be.revertedWithCustomError(contractWithOwner, "OwnableInvalidOwner")
@@ -48,7 +52,6 @@ describe("ContractWithOwner", () => {
     });
 
     it("Should transfer ownership to a new owner", async () => {
-        const { newOwner, contractWithOwner } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner.owner()}`);
         console.log(`Transferring ownership to new owner: ${newOwner.address}`);
         await contractWithOwner.transferOwnership(newOwner.address);
@@ -57,7 +60,6 @@ describe("ContractWithOwner", () => {
     });
 
     it("Should allow the new owner to call the protected function", async () => {
-        const { newOwner, contractWithOwner } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner.owner()}`);
         await contractWithOwner.transferOwnership(newOwner.address);
         console.log(`New owner: ${await contractWithOwner.owner()}`);
@@ -68,7 +70,6 @@ describe("ContractWithOwner", () => {
     });
 
     it("Should revert when a non-owner tries to renounce ownership", async () => {
-        const { nonOwner, contractWithOwner } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner.owner()}`);
         console.log("Attempting to renounce ownership as non-owner...");
         await expect(contractWithOwner.connect(nonOwner).renounceOwnership())
@@ -77,7 +78,6 @@ describe("ContractWithOwner", () => {
     });
 
     it("Should renounce ownership and leave the contract without an owner", async () => {
-        const { contractWithOwner } = await loadFixture(deployFixture);
         console.log(`Current owner: ${await contractWithOwner.owner()}`);
         console.log("Renouncing ownership...");
         await contractWithOwner.renounceOwnership();

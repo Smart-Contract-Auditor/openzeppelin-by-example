@@ -10,7 +10,7 @@ contract ContractWithOwner is Ownable {
     uint public protectedCount;
     uint public unprotectedCount;
 
-    function protectedFunction(uint _newCount) onlyOwner external {
+    function protectedFunction(uint _newCount) external onlyOwner {
         protectedCount = _newCount;
     }
 
