@@ -4,6 +4,7 @@
   "description": "A series of examples contracts that leverage OpenZeppelin's contract library. ",
   "main": "index.js",
   "scripts": {
+    "test-accesscontrol": "npx hardhat test ./test/access/ContractWithAccessControl.t.js --network hardhat",
     "test-ownable": "npx hardhat test ./test/access/ContractWithOwner.t.js",
     "test-ownable2step": "npx hardhat test ./test/access/ContractWithOwner2Step.t.js",
     "test-pausable": "npx hardhat test ./test/utils/PausableContract.t.js"
@@ -11,7 +12,8 @@
   "author": "TheSmartContractAuditor",
   "license": "ISC",
   "dependencies": {
-    "@openzeppelin/contracts": "5.2.0"
+    "@openzeppelin/contracts": "5.2.0",
+    "dotenv": "^16.4.7"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
