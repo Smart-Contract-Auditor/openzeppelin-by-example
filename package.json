@@ -7,7 +7,8 @@
     "test-accesscontrol": "npx hardhat test ./test/access/ContractWithAccessControl.t.js --network hardhat",
     "test-ownable": "npx hardhat test ./test/access/ContractWithOwner.t.js",
     "test-ownable2step": "npx hardhat test ./test/access/ContractWithOwner2Step.t.js",
-    "test-pausable": "npx hardhat test ./test/utils/PausableContract.t.js"
+    "test-pausable": "npx hardhat test ./test/utils/PausableContract.t.js",
+    "test-reentrancyguard": "npx hardhat test ./test/utils/ReentrancyGuardedContract.t.js"
   },
   "author": "TheSmartContractAuditor",
   "license": "ISC",
